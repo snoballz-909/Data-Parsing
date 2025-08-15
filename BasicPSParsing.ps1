@@ -3,3 +3,6 @@
 
 # Alternatively selecting 2 seperate values from within seperate nests by using the "Expression" placeholder to define the nested property.
 (Get-Content .\graph.json -Raw | ConvertFrom-Json).nodes | Select-Object @{Name='Servers';Expression={$_.label}}, @{Name='OU_Object';Expression={$_.props.distinguishedname}} | Export-Csv output.csv -NoTypeInformation
+
+# Accounting for a nested [array] with an if statement iterating the first index entry
+(Get-Content .\20240305110018_computers.json -Raw | ConvertFrom-Json).data.Properties | Select-Object @{Name='Hostname';Expression={$_.name}}, @{Name='FirstSPN';Expression={if ($_.serviceprincipalnames -is [array]) {$_.serviceprincipalnames[0]} else {$_.serviceprincipalnames}}} | Export-Csv output.csv -NoTypeInformation
